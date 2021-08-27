@@ -28,11 +28,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+AUTH_USER_MODEL = 'profili.Account'
 # Application definition
 
 INSTALLED_APPS = [
     'main',
+    'profili',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
