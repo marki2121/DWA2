@@ -146,3 +146,7 @@ TEMP = os.path.join(BASE_DIR, 'media_cdn/temp')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Umisto na meil sve salje u terminal
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
