@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.conf.urls import include
 
 from main.views import (
     pocetna_view
@@ -12,6 +13,7 @@ from profili.views import(
     register_view,
     login_view,
     logout_view,
+    search_view,
 )
 
 urlpatterns = [
@@ -25,7 +27,7 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name="logout"),
 
-    # Password reset links (ref: https://github.com/django/django/blob/master/django/contrib/auth/views.py)
+    # Password reset linkovi (ref: https://github.com/django/django/blob/master/django/contrib/auth/views.py)
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_reset/password_change_done.html'), 
         name='password_change_done'),
 
@@ -40,6 +42,13 @@ urlpatterns = [
     
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset/password_reset_complete.html'),
      name='password_reset_complete'),
+
+    #Profil
+    path('account/', include('profili.urls', namespace='account')),
+
+    #Search
+
+    path('search/', search_view, name="search"),
 
 ]
 

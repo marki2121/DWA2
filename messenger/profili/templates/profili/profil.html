@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style type="text/css">
+    .slika{
+        max-width: 250px;
+        height: auto;
+    }
+</style>
+
+
+<div class="container-fluid">
+    <div class="d-flex flex-row justify-content-center flex-wrap align-items-start">
+        <!-- prvi box -->
+        <div class="card profile-card m-2">
+            <div class="card-body">
+                <div class="d-flex flex-column justify-content-center p-4">
+                    
+                    <div class="slika mx-auto mb-4">
+                        <img class="d-block border border-dark rounded-circle img-fluid mx-auto profile-imag" id="id_profile_image" src="{{profile_image}}">
+                    </div>
+
+                    <p class="mt-4 mb-1">Email</p>
+                    <h5>{{email}}</h5>
+                    <p class="mt-4 mb-1">Username</p>
+                    <h5>{{username}}</h5>
+                    
+                    <!-- Kada gledas svoj profil -->
+                    {% if is_self %}
+                    <a class="btn mt-4 btn-primary">Update image</a>
+                    <div class="d-flex flex-column mt-4">
+                        <a class="m-auto" href="{% url 'password_change' %}">Change password</a>
+                    </div>
+                    {% endif %}
+
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock content %}

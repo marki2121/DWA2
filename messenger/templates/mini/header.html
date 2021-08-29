@@ -7,8 +7,8 @@
 		<h5 class="mr-3 font-weight-normal justify-content-start">
 			<a class="p-2 text-dark" href="{% url 'home' %}">Home</a>
 		</h5>
-		<form class="search-bar justify-content-start">
-			<input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
+		<form class="search-bar justify-content-start" onsubmit="return executeQuery();">
+			<input type="text" class="form-control" name="q" id="id_q" placeholder="Search...">
 		</form>
 
 		<div class="d-flex flex-row-reverse flex-grow-1">
@@ -20,7 +20,7 @@
                     </a>
                   
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                      <li><a class="dropdown-item" href="#">Account</a></li>
+                      <li><a class="dropdown-item" href="{% url 'account:view' user_id=request.user.id %}">Account</a></li>
                       <li><a class="dropdown-item" href="{% url 'logout'%}">Logout</a></li>
                     </ul>
                   </div>
@@ -79,3 +79,12 @@
 	</div>
 
 </div>
+
+<script type="text/javascript">
+	function executeQuery() {
+		var que = ""
+		que = document.getElementById('id_q').value;
+		window.location.replace("{% url 'search' %}?q=" + que)
+		return false
+	}
+</script>
