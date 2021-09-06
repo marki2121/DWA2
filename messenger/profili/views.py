@@ -107,7 +107,7 @@ def search_view(request, *args, **kwargs):
             accounts = []
 
             for account in rezultati:
-                accounts.append((account, False)) # dok ne napravim frendove
+                accounts.append((account, False)) # dok ne napravim frendove !!!
             
             context['accounts'] = accounts
 
