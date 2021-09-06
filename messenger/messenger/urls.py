@@ -17,7 +17,7 @@ from profili.views import(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name="admin"),
 
     #Početna
     path('', pocetna_view , name="home"),

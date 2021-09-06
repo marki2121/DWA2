@@ -1,0 +1,23 @@
+from django.contrib import admin
+from prijatelji.models import ListaPrijatelja, ZahtijevPrijateljstva
+
+class ListaPrijateljaAdmin(admin.ModelAdmin):
+    list_filter = ['user']
+    list_display = ['user']
+    search_fields  = ['user']
+    readonly_fields  = ['user']
+
+    class Meta:
+        model = ListaPrijatelja
+
+admin.site.register(ListaPrijatelja, ListaPrijateljaAdmin)
+
+class ZahtijevPrijateljstvaAdmin(admin.ModelAdmin):
+    list_filter = ['posiljatelj', 'primatelj']
+    list_display = ['posiljatelj', 'primatelj']
+    search_fields  = ['posiljatelj__username', 'primatelj__username']
+
+    class Meta:
+        model = ZahtijevPrijateljstva
+
+admin.site.register(ZahtijevPrijateljstva, ZahtijevPrijateljstvaAdmin)
