@@ -5,6 +5,9 @@ from django.conf import settings
 
 from profili.forms import RegistreationForm, LoginForm
 from profili.models import Account
+from prijatelji.models import ZahtijevPrijateljstva, ListaPrijatelja
+from prijatelji.pomocne import get_friend_request_or_false
+from prijatelji.friend_request_status import FriendRequestStatus
 
 def register_view(requests, *args, **kwargs):
     user = requests.user
@@ -78,19 +81,52 @@ def profil_view(request, *args, **kwargs):
         context['email'] = account.email
         context['username'] = account.username
         context['profile_image'] = account.profile_image.url
+
+        try: 
+            friend_list = ListaPrijatelja.objects.get(user=account)
+        except ListaPrijatelja.DoesNotExist:
+            friend_list = ListaPrijatelja(user=account)
+            friend_list.save()
+
+        friends = friend_list.prijatelji.all()
+        context['friends'] = friends
+
         
         #variable za tamplate
         is_self = True
         is_friend = False
+        request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+        friend_requests = None
         user = request.user
 
         if user.is_authenticated and user != account:
             is_self = False
+            if friends.filter(pk=user.id):
+                is_friend=True
+            else:
+                is_friend=False
+                # slucaj1
+                if get_friend_request_or_false(posiljatelj=account, primatelj=user) != False:
+                    request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+                    context['pending_friend_request_id'] = get_friend_request_or_false(posiljatelj=account, primatelj=user).id
+                # slucaj2
+                elif get_friend_request_or_false(posiljatelj=user, primatelj=account) != False:
+                    request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
+                # slucaj3
+                else:
+                    request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
         elif not user.is_authenticated:
             is_self = False
+        else:
+            try:
+                friend_requests = ZahtijevPrijateljstva.objects.filter(receiver=user, is_active=True)
+            except:
+                pass
 
         context['is_self'] = is_self
         context['is_friend'] = is_friend
+        context['request_sent'] = request_sent
+        context['friend_requests'] = friend_requests
         context['BASE_URL'] = settings.BASE_URL
 
         return render(request, "profili/profil.html", context)
