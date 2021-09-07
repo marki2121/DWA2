@@ -153,7 +153,7 @@
 	var sendFriendRequestBtn = document.getElementById("id_send_friend_request_btn")
 	if (sendFriendRequestBtn != null){
 		sendFriendRequestBtn.addEventListener("click", function(){
-			//sendFriendRequest("{{id}}", onFriendRequestSent)
+			sendFriendRequest("{{id}}", onFriendRequestSent)
 		})
 	}
 
@@ -179,5 +179,7 @@
 		//declineFriendRequest(friend_request_id, onFriendRequestDeclined)
 	}
 </script>
+
+    {% include 'prijatelji/mini/send_friend_request.html' %}
 
 {% endblock content %}
