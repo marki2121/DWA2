@@ -119,10 +119,10 @@ def profil_view(request, *args, **kwargs):
             is_self = False
         else:
             try:
-                friend_requests = ZahtijevPrijateljstva.objects.filter(receiver=user, is_active=True)
+                friend_requests = ZahtijevPrijateljstva.objects.filter(primatelj=user, is_active=True)
             except:
                 pass
-
+                
         context['is_self'] = is_self
         context['is_friend'] = is_friend
         context['request_sent'] = request_sent
