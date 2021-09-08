@@ -52,7 +52,7 @@ class ZahtijevPrijateljstva(models.Model):
 
         if primatelj_fl:
             primatelj_fl.add_friend(self.posiljatelj)
-            posiljatelj_fl = ListaPrijatelja.object.get(user = self.posiljatelj)
+            posiljatelj_fl = ListaPrijatelja.objects.get(user = self.posiljatelj)
             if posiljatelj_fl:
                 posiljatelj_fl.add_friend(self.primatelj)
                 self.is_active = False

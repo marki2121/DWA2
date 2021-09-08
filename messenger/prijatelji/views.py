@@ -69,6 +69,34 @@ def lista_zahtijeva_view(request, *args, **kwargs):
     #Render
     return render(request, "prijatelji/lista_zahtijeva.html", context)
 
+def prihvati(request, *args, **kwargs):
+    user = request.user
+
+    payload = {}
+
+    if request.method == 'GET' and user.is_authenticated:
+        frend_requests_id = kwargs.get('friend_request_id')
+
+        if frend_requests_id:
+            friend_request = ZahtijevPrijateljstva.objects.get(pk = frend_requests_id)
+
+            if friend_request.primatelj == user:
+                if friend_request:
+                    friend_request.prihvaceno()
+                    payload['response'] = "Friend request accepted."
+                
+                else:
+                    payload['response'] = "Ups."
+            else:
+                 payload['response'] = "Nemas sta acceptat."
+        else:
+             payload['response'] = "to nije tvoje da prihvacas."
+
+    else:
+        payload['response'] = "Login plizz"
+
+    return HttpResponse(json.dumps(payload), content_type="application/json")
+
 
 
                     

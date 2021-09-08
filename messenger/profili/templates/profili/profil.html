@@ -19,6 +19,20 @@
 		color: #000;
 		font-weight: 500;
 	}
+    .material-icons{
+	    font-size: 30px;
+    }
+    .material-icons:hover{
+        cursor: pointer;
+    }
+       
+    .confirm-friend-request:hover {
+        opacity: 0.3;
+    }
+   .decline-friend-request:hover {
+        opacity: 0.3;
+    }
+
 </style>
 
 
@@ -172,7 +186,7 @@
 	}
 
 	function triggerAcceptFriendRequest(friend_request_id){
-		//acceptFriendRequest(friend_request_id, onFriendRequestAccepted)
+		acceptFriendRequest(friend_request_id, onFriendRequestAccepted)
 	}
 
 	function triggerDeclineFriendRequest(friend_request_id){
@@ -181,5 +195,6 @@
 </script>
 
     {% include 'prijatelji/mini/send_friend_request.html' %}
+    {% include 'prijatelji/mini/accept_friend_request.html' %}
 
 {% endblock content %}
