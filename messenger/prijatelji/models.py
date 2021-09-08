@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings 
 
+#Model za listu prijatelja
 class ListaPrijatelja(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL , on_delete=models.CASCADE, related_name="user")

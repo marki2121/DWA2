@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from profili.models import Account
 
+#Dodavanje accounta na admin panel
 class AccountAdmin(UserAdmin):
     list_display = ('email', 'username', 'datum_dolaska', 'zadnji_login', 'is_admin', 'is_staff')
     search_fields = ('email', 'username')

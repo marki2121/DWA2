@@ -1,6 +1,8 @@
 from django.contrib import admin
 from prijatelji.models import ListaPrijatelja, ZahtijevPrijateljstva
 
+
+#Dodavanje liste prijatelja na admin site
 class ListaPrijateljaAdmin(admin.ModelAdmin):
     list_filter = ['user']
     list_display = ['user']
@@ -12,6 +14,7 @@ class ListaPrijateljaAdmin(admin.ModelAdmin):
 
 admin.site.register(ListaPrijatelja, ListaPrijateljaAdmin)
 
+#Dodavanje zahtijeva na admin site
 class ZahtijevPrijateljstvaAdmin(admin.ModelAdmin):
     list_filter = ['posiljatelj', 'primatelj']
     list_display = ['posiljatelj', 'primatelj']

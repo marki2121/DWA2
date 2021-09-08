@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <style type="text/css">
+        .card{
+            border-radius: 12px;
+        }
+        .profile_link {
+            color: #000;
+        }
+        .profile_image {
+            max-height: 100px;
+		    max-width: 100px;
+            border-radius: 12px;
+        }
+        .material-icons{
+		    font-size: 30px;
+        }
+        .material-icons:hover{
+            cursor: pointer;
+        }
+    </style>
+    
+    <div class="conteiner">
+        <div class="card p-2">
+        
+            {% if lista_prijatelja %}
+                <div class="d-flex flex-row flex-wrap">
+                    {% for prijatelj in lista_prijatelja %}
+                        <div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
+                            
+                            <a class="profile-link" href="{% url 'account:view' user_id=prijatelj.0.id %}">
+                                <div class="card-image m-2">
+                                    <img class="iamge-fluid profile_image" src="{{prijatelj.0.profile_image.url}}">
+                                </div>
+                            </a>
+
+                            <a class="profile-link" href="{% url 'account:view' user_id=prijatelj.0.id %}">
+                                <div class="card-center px-2">
+                                    <h4 class="card-title">{{prijatelj.0.username|truncatechars:50}}</h4>
+                                </div>
+                            </a>
+                            {% if prijatelj.1 %}
+                                <div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
+                                    <div class="btn btn-primary" onclick="createOrReturnPrivateChat('{{prijatelj.0.id}}')">
+                                        <span class="material-icons m-auto">message</span>
+                                        <span class="message-btn-text m-auto pl-2">Message</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if forloop.counter|divisibleby:2 %}
+                            </div><div class="d-flex flex-row flex-wrap">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center p-4">
+                    <p>No results</p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock content %}

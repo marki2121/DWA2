@@ -3,44 +3,44 @@ from django.http import HttpResponse
 import json
 
 from profili.models import Account
-from prijatelji.models import ZahtijevPrijateljstva
+from prijatelji.models import ZahtijevPrijateljstva, ListaPrijatelja
 
 def send_request(request):
-    user = request.user
+    user = request.user #Ddohvacamo trenutnog usera
 
     payload = {}
 
-    if request.method == "POST" and user.is_authenticated:
-        user_id = request.POST.get("receiver_user_id")
+    if request.method == "POST" and user.is_authenticated: #Ako je metoda zahtijeva POST i user je prijavljeni
+        user_id = request.POST.get("receiver_user_id") # Dohvacamo id osobe kojoj se zahtijev salje
 
-        if user_id:
-            primatelj = Account.objects.get(pk=user_id)
+        if user_id: #Ako ga dohvatimo
+            primatelj = Account.objects.get(pk=user_id) #Dohvacamo njegov primarni kljuc
             try:
-                friend_requests = ZahtijevPrijateljstva.objects.filter(posiljatelj=user, primatelj=primatelj)
+                friend_requests = ZahtijevPrijateljstva.objects.filter(posiljatelj=user, primatelj=primatelj) #Dohvacamo listu zahtijeva
 
                 try:
-                    for request in friend_requests:
-                        if request.is_active:
+                    for request in friend_requests: # loopamo kroz sve zahtijeve
+                        if request.is_active: # ako je vec poslan
                             raise Exception("You already sent them a friend request.")
                     
-                    friend_request = ZahtijevPrijateljstva(posiljatelj=user ,primatelj=primatelj, is_active=True)
-                    friend_request.save()
+                    friend_request = ZahtijevPrijateljstva(posiljatelj=user ,primatelj=primatelj, is_active=True) # saljemo zahtijev
+                    friend_request.save() # spremamo ga 
                     payload['response'] = "Friend request sent."
 
                 except Exception as e:
-                    payload['response'] = str(e)
-            except ZahtijevPrijateljstva.DoesNotExist:
+                    payload['response'] = str(e) # u slucaju errora
+            except ZahtijevPrijateljstva.DoesNotExist: # ako osoba nema listu zahtijeva stvaramo novu
                 friend_request = ZahtijevPrijateljstva(posiljatelj=user, primatelj=primatelj, is_active=True)
                 friend_request.save()
                 payload['response'] = "Friend request sent."
         
             if payload['response'] == None:
-                payload['response'] = "Something went wrong."
+                payload['response'] = "Something went wrong." # error
         else:
-            payload['response'] = "Unable to sent a friend request."
+            payload['response'] = "Unable to sent a friend request." # error
     else:
-        payload['response'] = "You must be authenticated to send a friend request."
-    return HttpResponse(json.dumps(payload), content_type="application/json")
+        payload['response'] = "You must be authenticated to send a friend request." # ako nismo prijavljeni 
+    return HttpResponse(json.dumps(payload), content_type="application/json") # slanje payloada
 
 def lista_zahtijeva_view(request, *args, **kwargs):
     #pregled liste zahtijeva
@@ -69,22 +69,23 @@ def lista_zahtijeva_view(request, *args, **kwargs):
     #Render
     return render(request, "prijatelji/lista_zahtijeva.html", context)
 
+# Prihvacanje zahtijeva
 def prihvati(request, *args, **kwargs):
-    user = request.user
+    user = request.user # ddohvacamo usera na stranici 
 
     payload = {}
 
-    if request.method == 'GET' and user.is_authenticated:
-        frend_requests_id = kwargs.get('friend_request_id')
+    if request.method == 'GET' and user.is_authenticated: # provjera metode i prijave 
+        frend_requests_id = kwargs.get('friend_request_id') # Dohvacamo id 
 
-        if frend_requests_id:
-            friend_request = ZahtijevPrijateljstva.objects.get(pk = frend_requests_id)
+        if frend_requests_id: # ako id dohvatimo 
+            friend_request = ZahtijevPrijateljstva.objects.get(pk = frend_requests_id) # dohvacamo kljuc
 
-            if friend_request.primatelj == user:
+            if friend_request.primatelj == user: # ako je user primatelj zahtijeva
                 if friend_request:
-                    friend_request.prihvaceno()
+                    friend_request.prihvaceno() # zahtijev prihavtimo 
                     payload['response'] = "Friend request accepted."
-                
+# ERRORI                
                 else:
                     payload['response'] = "Ups."
             else:
@@ -95,7 +96,42 @@ def prihvati(request, *args, **kwargs):
     else:
         payload['response'] = "Login plizz"
 
+    #Slanje payloada
     return HttpResponse(json.dumps(payload), content_type="application/json")
+
+def ListaPrijateljaView(request, *args, **kwargs):
+    user = request.user
+
+    context = {}
+
+    if user.is_authenticated:
+        user_id = kwargs.get("user_id")
+        
+        if user_id:
+            try:
+                Ouser = Account.objects.get(pk=user_id)
+            except:
+                return HttpResponse("User is dead.")
+            try:
+                f_list = ListaPrijatelja.objects.get(user=Ouser)
+            except:
+                return HttpResponse('You have no friends?!')
+            
+            #Moras biti frend da bi vidia frend listu
+            if user != Ouser:
+                if not user in f_list.prijatelji.all():
+                    return HttpResponse("You need to be his/her friend you creep")
+            
+            prijatelji = []
+
+            auth_user_fl = ListaPrijatelja.objects.get(user=user)
+            for friend in f_list.prijatelji.all():
+                prijatelji.append((friend, auth_user_fl.is_friend(friend)))
+            
+            context['lista_prijatelja'] = prijatelji
+    else:
+        return HttpResponse("You need to be his/her friend you creep")
+    return render(request, 'prijatelji/lista_prijatelja.html', context)
 
 
 
