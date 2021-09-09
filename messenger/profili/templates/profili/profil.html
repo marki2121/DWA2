@@ -174,7 +174,7 @@
 	var cancelFriendRequestBtn = document.getElementById("id_cancel_friend_request_btn")
 	if(cancelFriendRequestBtn != null){
 		cancelFriendRequestBtn.addEventListener("click", function(){
-			//cancelFriendRequest("{{id}}", onFriendRequestCancelled)
+			cancelFriendRequest("{{id}}", onFriendRequestCancelled)
 		})
 	}
 
@@ -190,11 +190,13 @@
 	}
 
 	function triggerDeclineFriendRequest(friend_request_id){
-		//declineFriendRequest(friend_request_id, onFriendRequestDeclined)
+		declineFriendRequest(friend_request_id, onFriendRequestDeclined)
 	}
 </script>
 
     {% include 'prijatelji/mini/send_friend_request.html' %}
     {% include 'prijatelji/mini/accept_friend_request.html' %}
+    {% include 'prijatelji/mini/denie_friend_request.html'%}
+    {% include 'prijatelji/mini/cancel_friend_request.html' %} 
 
 {% endblock content %}

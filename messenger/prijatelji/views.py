@@ -66,7 +66,7 @@ def lista_zahtijeva_view(request, *args, **kwargs):
     else:
         redirect("login")
 
-    #Render
+    #Renderw
     return render(request, "prijatelji/lista_zahtijeva.html", context)
 
 # Prihvacanje zahtijeva
@@ -98,6 +98,66 @@ def prihvati(request, *args, **kwargs):
 
     #Slanje payloada
     return HttpResponse(json.dumps(payload), content_type="application/json")
+
+#Odbijanje zahtijeva
+def odbi(request, *args, **kwargs):
+    user = request.user # Dohvacanje usera
+
+    payload = {}
+
+    if request.method == 'GET' and user.is_authenticated: # provjera autentikacije i metode 
+        frend_requests_id = kwargs.get('friend_request_id') # dohvacanje id-a
+
+        if frend_requests_id:
+            frend_request = ZahtijevPrijateljstva.objects.get(pk = frend_requests_id) # dohvacanje zahtijeva
+
+            if frend_request.primatelj == user: # provijera dali je zahtijev nas
+                if frend_request:
+                    frend_request.odbijeno() # dobijanje
+                    payload['response'] = "Friend request denied."
+# ERRORI
+                else:
+                    payload['response'] = "Ups."
+            else:
+                payload['response'] = "Nemas sta odbit"
+        else:
+            payload['response'] = "To nije tvoje da odbijas"
+    else:
+        payload['response'] = "Login plizz"
+    
+    return HttpResponse(json.dumps(payload), content_type="application/json")
+
+def cancel(request, *args, **kwargs):
+    user = request.user
+
+    payload = {}
+
+    if request.method == "POST" and user.is_authenticated: 
+        user_id = request.POST.get("receiver_user_id")
+
+        if user_id:
+            account = Account.objects.get(pk=user_id)
+
+            try:
+                f_requests = ZahtijevPrijateljstva.objects.filter(posiljatelj=user, primatelj=account, is_active=True)
+            
+            except f_requests.DoesNotExist:
+                return HttpResponse("Nothing to get canceled.")
+
+            if len(f_requests) > 1:
+                for request in f_requests:
+                    request.otkazano()
+                payload['response'] = "Friend request canceled."
+            else:
+                f_requests.first().otkazano()
+                payload['response'] = "Friend request canceled."
+        else:
+            payload['response'] = "User DoesNotExist"
+    else:
+        payload['response'] = "Login plizz"
+    
+    return HttpResponse(json.dumps(payload), content_type='application/json')
+
 
 def ListaPrijateljaView(request, *args, **kwargs):
     user = request.user
