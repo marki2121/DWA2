@@ -158,6 +158,30 @@ def cancel(request, *args, **kwargs):
     
     return HttpResponse(json.dumps(payload), content_type='application/json')
 
+def RemoveFriend(request, *args, **kwargs):
+    user = request.user
+
+    payload = {}
+
+    if user.is_authenticated and request.method == "POST":
+        user_id = request.POST.get("receiver_user_id")
+
+        if user_id:
+            try:
+                otkazani = Account.objects.get(pk=user_id)
+                F_list = ListaPrijatelja.objects.get(user=user)
+                F_list.unfriend(otkazani)
+                payload['response'] = "Successfully removed that friend."
+            except Exception as e:
+                payload['response'] = str(e)
+        else:
+            payload['response'] = "Nema ga"
+    else:
+        payload['response'] = "Login plizz"
+        redirect("login")
+
+    return HttpResponse(json.dumps(payload), content_type="application/json")
+
 
 def ListaPrijateljaView(request, *args, **kwargs):
     user = request.user

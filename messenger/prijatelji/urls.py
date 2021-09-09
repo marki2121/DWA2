@@ -6,6 +6,7 @@ from prijatelji.views import(
     prihvati,
     odbi,
     cancel,
+    RemoveFriend,
     ListaPrijateljaView,
 )
 
@@ -20,6 +21,9 @@ urlpatterns = [
 
     #     Cancel zahtijeva
     path('friend_cancel/', cancel, name='friend-cancel'),
+
+    #     Unfriend
+    path('unfriend/', RemoveFriend, name='unfriend'),
     
     #     Pregled zahtijeva
     path('friend_request/<user_id>/', lista_zahtijeva_view, name='friend-requests'),

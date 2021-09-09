@@ -32,6 +32,9 @@
    .decline-friend-request:hover {
         opacity: 0.3;
     }
+    .dropdown-toggle::after { 
+		content: none; 
+	}
 
 </style>
 
@@ -99,12 +102,9 @@
 
                     {% if is_friend %}
                         <div class="dropdown pt-4 m-auto">
-                            <button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Friends
+                            <button class="btn btn-secondary dropdown-toggle friends-btn" type="button" onclick="removeFriend('{{id}}', onFriendRemoved)" id="id_friends_toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Unfriend
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="id_friends_toggle">
-                                <a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
-                            </div>
                         </div>
                     {% endif %}
 
@@ -181,7 +181,7 @@
 	var removeFriendBtn = document.getElementById("id_unfriend_btn")
 	if (removeFriendBtn != null){
 		removeFriendBtn.addEventListener("click", function(){
-			//removeFriend("{{id}}", onFriendRemoved)
+			removeFriend("{{id}}", onFriendRemoved)
 		})
 	}
 
@@ -198,5 +198,6 @@
     {% include 'prijatelji/mini/accept_friend_request.html' %}
     {% include 'prijatelji/mini/denie_friend_request.html'%}
     {% include 'prijatelji/mini/cancel_friend_request.html' %} 
+    {% include 'prijatelji/mini/remove_friend.html'%}
 
 {% endblock content %}
