@@ -40,7 +40,7 @@
 					{{ message.user.username }}
 				</h5>
 				<div class="card-body d-flex flex-row">
-                    <a class="btn btn-primary m-2 px-4 {% if active_direct == message.user.username %}is-active{% endif %}" href="{% url 'poruk:poruke' message.user.username %}">
+                    <a class="btn btn-primary m-2 px-4" href="{% url 'poruk:poruke' message.user.username %}">
                         <span class="material-icons m-auto">message</span>
                         <span class="message-btn-text m-auto pl-2">Message</span>
                     </a>

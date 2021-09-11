@@ -43,10 +43,10 @@
                             </a>
                             {% if prijatelj.1 %}
                                 <div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
-                                    <div class="btn btn-primary" onclick="createOrReturnPrivateChat('{{prijatelj.0.id}}')">
+                                    <a class="btn btn-primary" href="{% url 'poruk:poruke' username=prijatelj.0.username %}">
                                         <span class="material-icons m-auto">message</span>
                                         <span class="message-btn-text m-auto pl-2">Message</span>
-                                    </div>
+                                    </a>
                                 </div>
                             {% endif %}
                         </div>
