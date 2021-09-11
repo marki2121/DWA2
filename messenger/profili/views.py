@@ -28,7 +28,7 @@ def register_view(requests, *args, **kwargs):
             destinacija = kwargs.get('next')
             if destinacija:
                 return redirect(destinacija)
-            return redirect('home')
+            return redirect('poruk:chat')
         else:
             context['registration_form'] = form
     else:
@@ -42,7 +42,7 @@ def login_view(requests, *args, **kwargs):
 
     user = requests.user
     if user.is_authenticated:
-        return redirect('home')
+        return redirect('d-chat:chat')
     
     if requests.POST:
         form = LoginForm(requests.POST)
@@ -53,7 +53,7 @@ def login_view(requests, *args, **kwargs):
 
             if user:
                 login(requests, user)
-                return redirect('home')
+                return redirect('poruk:chat')
     else:
         form = LoginForm()
 
@@ -64,7 +64,7 @@ def login_view(requests, *args, **kwargs):
 
 def logout_view(request):
 	logout(request)
-	return redirect("home")
+	return redirect("poruk:chat")
 
 def profil_view(request, *args, **kwargs):
     context = {}

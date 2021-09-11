@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'main',
     'profili',
     'prijatelji',
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

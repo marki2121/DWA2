@@ -2,6 +2,12 @@ from django.shortcuts import render
 
 
 #Pocetna stranica
-def pocetna_view(requests, *args, **kwargs):
+def pocetna_view(request, *args, **kwargs):
     context={}
-    return render(requests, "main/home.html", context)
+
+    user = request.user
+    
+    if user.is_authenticated:
+        context['user'] = user
+
+    return render(request, "main/home.html", context)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+#Costume account manager
 class MyAccountMenager(BaseUserManager):
     def create_user(self, email, username, password=None):
         if not email:

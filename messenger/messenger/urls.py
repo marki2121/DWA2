@@ -16,11 +16,12 @@ from profili.views import(
     search_view,
 )
 
+from chat.views import(
+    chat_view,
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls, name="admin"),
-
-    #Početna
-    path('', pocetna_view , name="home"),
 
     #Login/register forme
     path('register/', register_view, name="register"),
@@ -52,6 +53,9 @@ urlpatterns = [
     #Search
 
     path('search/', search_view, name="search"),
+
+    #Chat
+    path("", include('chat.urls', namespace='poruk')),
 
 ]
 
