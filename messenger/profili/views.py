@@ -30,11 +30,12 @@ def register_view(requests, *args, **kwargs):
             email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password1')
             account = authenticate(email=email, password=raw_password)
+            user_id = Account.objects.get(username=account)
             login(requests, account)
             destinacija = kwargs.get('next')
             if destinacija:
                 return redirect(destinacija)
-            return redirect('poruk:chat')
+            return redirect('account:view', user_id=str(user_id.pk))
         else:
             context['registration_form'] = form
     else:
@@ -50,7 +51,7 @@ def login_view(requests, *args, **kwargs):
     # Provjera dalji je user ulogiran
     user = requests.user
     if user.is_authenticated:
-        return redirect('d-chat:chat')
+        return redirect('poruk:chat')
     
     #Provjera metode
     if requests.POST:
@@ -163,9 +164,14 @@ def search_view(request, *args, **kwargs):
             user = request.user
             accounts = []
 
-            # postavljanje accounta iz rezultata u varijablu
-            for account in rezultati:
-                accounts.append((account, False)) # dok ne napravim frendove !!!
+            if user.is_authenticated:
+                f_list = ListaPrijatelja.objects.get(user=user)
+                # postavljanje accounta iz rezultata u varijablu
+                for account in rezultati:
+                    accounts.append((account, f_list.is_friend(account)))
+            else:
+                for account in rezultati:
+                    accounts.append((account, False))
             
             context['accounts'] = accounts
 

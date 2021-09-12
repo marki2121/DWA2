@@ -14,12 +14,11 @@
 					// ui is updated
 				}
 				else if(data['response'] != null){
-					alert(data['response'])
+					alert(data['response'])					
 				}
 			},
 			error: function(data) {
 				console.error("ERROR...", data)
-				alert("Ne opet")
 			},
 			complete: function(data){
 				uiUpdateFunction()
