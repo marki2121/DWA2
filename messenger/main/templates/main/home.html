@@ -44,6 +44,11 @@
                         <span class="material-icons m-auto">message</span>
                         <span class="message-btn-text m-auto pl-2">Message</span>
                     </a>
+                    {% if message.unread %}
+                    <span class="material-icons m-auto" style="color: red">
+                        markunread
+                    </span>
+                    {% endif %}
                 </div>
 			</div>
             {% endfor %}
