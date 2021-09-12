@@ -1,6 +1,8 @@
 <script type="text/javascript">
-    function declineFriendRequest(friend_request_id, uiUpdateFunction){
-        var url = "{% url 'friend:friend-request-denie' friend_request_id=549842161561 %}".replace("549842161561", friend_request_id)
+    // odbijanje frend requesta
+	function declineFriendRequest(friend_request_id, uiUpdateFunction){
+        // Izrada url-a za dodavanje (jedino rijesenje koje sam naso)
+		var url = "{% url 'friend:friend-request-denie' friend_request_id=549842161561 %}".replace("549842161561", friend_request_id)
         $.ajax({
 			type: 'GET',
 			dataType: "json",
