@@ -5,6 +5,7 @@ import json
 from profili.models import Account
 from prijatelji.models import ZahtijevPrijateljstva, ListaPrijatelja
 
+# Slanje zahtijeva
 def send_request(request):
     user = request.user #Ddohvacamo trenutnog usera
 
@@ -42,8 +43,9 @@ def send_request(request):
         payload['response'] = "You must be authenticated to send a friend request." # ako nismo prijavljeni 
     return HttpResponse(json.dumps(payload), content_type="application/json") # slanje payloada
 
+#pregled liste zahtijeva
 def lista_zahtijeva_view(request, *args, **kwargs):
-    #pregled liste zahtijeva
+    
     context = {}
 
     user = request.user
@@ -127,18 +129,22 @@ def odbi(request, *args, **kwargs):
     
     return HttpResponse(json.dumps(payload), content_type="application/json")
 
+# Brisanje zahtijeva
 def cancel(request, *args, **kwargs):
     user = request.user
 
     payload = {}
 
+    #Provjera autentikacije i metode zahtijeva
     if request.method == "POST" and user.is_authenticated: 
         user_id = request.POST.get("receiver_user_id")
 
+        #Ako user postoji 
         if user_id:
             account = Account.objects.get(pk=user_id)
 
             try:
+                #Dohvacanje liste zahtijeva
                 f_requests = ZahtijevPrijateljstva.objects.filter(posiljatelj=user, primatelj=account, is_active=True)
             
             except f_requests.DoesNotExist:
@@ -146,10 +152,10 @@ def cancel(request, *args, **kwargs):
 
             if len(f_requests) > 1:
                 for request in f_requests:
-                    request.otkazano()
+                    request.otkazano() #Otkazivanje zahtijeva 
                 payload['response'] = "Friend request canceled."
             else:
-                f_requests.first().otkazano()
+                f_requests.first().otkazano() #Otkazivanje zahtijeva 
                 payload['response'] = "Friend request canceled."
         else:
             payload['response'] = "User DoesNotExist"
@@ -158,19 +164,22 @@ def cancel(request, *args, **kwargs):
     
     return HttpResponse(json.dumps(payload), content_type='application/json')
 
+# Brisanje prijatelja
 def RemoveFriend(request, *args, **kwargs):
     user = request.user
 
     payload = {}
 
+    #Provjera autentikacije i metode zahtijeva
     if user.is_authenticated and request.method == "POST":
         user_id = request.POST.get("receiver_user_id")
-
+        
+        #Ako user postoji 
         if user_id:
             try:
                 otkazani = Account.objects.get(pk=user_id)
                 F_list = ListaPrijatelja.objects.get(user=user)
-                F_list.unfriend(otkazani)
+                F_list.unfriend(otkazani) # Micanje frenda iz frendliste
                 payload['response'] = "Successfully removed that friend."
             except Exception as e:
                 payload['response'] = str(e)
@@ -182,12 +191,13 @@ def RemoveFriend(request, *args, **kwargs):
 
     return HttpResponse(json.dumps(payload), content_type="application/json")
 
-
+# View za listu prijatelja
 def ListaPrijateljaView(request, *args, **kwargs):
     user = request.user
 
     context = {}
 
+    #Provjera dali smo prijavljeni
     if user.is_authenticated:
         user_id = kwargs.get("user_id")
         
@@ -197,20 +207,20 @@ def ListaPrijateljaView(request, *args, **kwargs):
             except:
                 return HttpResponse("User is dead.")
             try:
-                f_list = ListaPrijatelja.objects.get(user=Ouser)
+                f_list = ListaPrijatelja.objects.get(user=Ouser) #Dohvacanje liste prijatelja account
             except:
                 return HttpResponse('You have no friends?!')
             
             #Moras biti frend da bi vidia frend listu
             if user != Ouser:
-                if not user in f_list.prijatelji.all():
+                if not user in f_list.prijatelji.all(): # Provjera dali smo na frend listi
                     return HttpResponse("You need to be his/her friend you creep")
             
             prijatelji = []
 
-            auth_user_fl = ListaPrijatelja.objects.get(user=user)
+            auth_user_fl = ListaPrijatelja.objects.get(user=user) # Dohvacanje nase f-liste
             for friend in f_list.prijatelji.all():
-                prijatelji.append((friend, auth_user_fl.is_friend(friend)))
+                prijatelji.append((friend, auth_user_fl.is_friend(friend))) # Dodavanje frendova u varijablu prijatelji sa dodatnom varijablom 1-0 ako su nasi prijatelji na listi
             
             context['lista_prijatelja'] = prijatelji
     else:

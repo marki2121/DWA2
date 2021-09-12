@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 #Costume account manager
 class MyAccountMenager(BaseUserManager):
+    #Izrada usera
     def create_user(self, email, username, password=None):
         if not email:
             raise ValueError('Users must have an email address')
@@ -18,6 +19,7 @@ class MyAccountMenager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    #Izrada superusera
     def create_superuser(self, email, username, password):
         user = self.create_user(
             email=email,
@@ -30,12 +32,15 @@ class MyAccountMenager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+#Dohvacanje filepath-a slike
 def get_profile_image_filepath(self):
     return 'profile_images/' + str(self.pk) + 'profilna.png'
 
+#Path za default sliku
 def get_default_profile_image():
     return 'profile_images/default.png'
 
+#costume account models sa usernamom umijesto emaila 
 class Account(AbstractBaseUser):
 
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)

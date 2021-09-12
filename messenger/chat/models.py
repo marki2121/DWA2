@@ -15,6 +15,7 @@ class Poruke(models.Model):
     is_read = models.BooleanField(default=False)
 
 
+    #Slanje poruka 
     def send_message(od_user, za_user, body):
         sender_msg = Poruke(
             user = od_user,
@@ -35,14 +36,16 @@ class Poruke(models.Model):
 
         return sender_msg
 
+    #Ocitavanje poruka 
     def get_message(user):
+        #Dohvacanje poredano od najnovije do najsatarije poruke
         messages = Poruke.objects.filter(user=user).values('za_user').annotate(last=Max('date')).order_by('-last')
         users = []
         for message in messages:
             users.append({
-                'user': Account.objects.get(pk=message['za_user']),
-                'last': message['last'],
-                'unread': Poruke.objects.filter(user=user, za_user__pk=message['za_user'], is_read=False).count()
+                'user': Account.objects.get(pk=message['za_user']), #User poruke
+                'last': message['last'], # Zadnja poruka
+                'unread': Poruke.objects.filter(user=user, za_user__pk=message['za_user'], is_read=False).count() # Dali je poruka procitana
                 })
         return users
 

@@ -9,7 +9,12 @@ from chat.views import(
 app_name = "chat"
 
 urlpatterns = [
+    # Pocetni chat view
     path('', chat_view, name="chat"),
+    
+    # Ocitavanje cheta s userom
     path("chat/<username>", poruke, name="poruke"),
+    
+    # Slanje poruka
     path("send/", SendMessage, name="posalji"),
 ]

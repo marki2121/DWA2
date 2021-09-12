@@ -4,12 +4,13 @@ from django.contrib.auth import authenticate
 
 from profili.models import Account
 
-# FŠorma za registraciju
+# Forma za registraciju
 class RegistreationForm(UserCreationForm):
     email = forms.EmailField(max_length=60, help_text="Email required.")
 
     class Meta:
         model = Account
+        #Polja koja cemo koristiti
         fields = ('email', 'username', 'password1', 'password2')
 
     #Provjerava valjanost emaila

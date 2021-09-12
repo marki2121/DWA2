@@ -86,6 +86,7 @@
             </form>
             </div>
             <script type="text/javascript">
+                // Reloada page svakih 10 sec da bi ocitao nove poruke (elegantnije rijesenje bi bilo django channels)
                 setTimeout(function reload() {location.reload()}, 10000)
             </script>
         
@@ -97,6 +98,7 @@
     </div>
 {% endif %}
 <script type="text/javascript">
+    // Scrola poruke uvijek na dno
     var messageBody = document.querySelector('#messageBody');
     messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
 </script>

@@ -9,16 +9,22 @@ from prijatelji.models import ZahtijevPrijateljstva, ListaPrijatelja
 from prijatelji.pomocne import get_friend_request_or_false
 from prijatelji.friend_request_status import FriendRequestStatus
 
+#view za registraciju
 def register_view(requests, *args, **kwargs):
     user = requests.user
+    
+    #Provjera dali je logedin
     if user.is_authenticated:
         return HttpResponse(f"You are already authenticated as {user.email}")
     
 
     context = {}
 
+    # Provjera metode zahtijeva
     if requests.POST:
         form = RegistreationForm(requests.POST)
+        
+        #Provjera dali je form dobar
         if form.is_valid():
             form.save()
             email = form.cleaned_data.get('email')
@@ -37,15 +43,20 @@ def register_view(requests, *args, **kwargs):
     
     return render(requests, 'profili/register.html', context)
 
+# View za login 
 def login_view(requests, *args, **kwargs):
     context = {}
 
+    # Provjera dalji je user ulogiran
     user = requests.user
     if user.is_authenticated:
         return redirect('d-chat:chat')
     
+    #Provjera metode
     if requests.POST:
         form = LoginForm(requests.POST)
+
+        #Provjera valjanosti forme
         if form.is_valid():
             email = requests.POST['email']
             password = requests.POST['password']
@@ -61,11 +72,12 @@ def login_view(requests, *args, **kwargs):
 
     return render(requests, 'profili/login.html', context)
     
-
+#Logout
 def logout_view(request):
 	logout(request)
 	return redirect("poruk:chat")
 
+# View za profil usera
 def profil_view(request, *args, **kwargs):
     context = {}
 
@@ -77,11 +89,13 @@ def profil_view(request, *args, **kwargs):
         return HttpResponse("Na ovo nismo bili spremni.")
 
     if account:
+        #Postavljane konteksta stranice
         context['id'] = account.id
         context['email'] = account.email
         context['username'] = account.username
         context['profile_image'] = account.profile_image.url
 
+        #Pokusati dohvatiti listu prijatelja usera
         try: 
             friend_list = ListaPrijatelja.objects.get(user=account)
         except ListaPrijatelja.DoesNotExist:
@@ -99,20 +113,23 @@ def profil_view(request, *args, **kwargs):
         friend_requests = None
         user = request.user
 
+        # Provjera dali je account od usera
         if user.is_authenticated and user != account:
             is_self = False
+            
+            #Provjera dali je account od frenda
             if friends.filter(pk=user.id):
                 is_friend=True
             else:
                 is_friend=False
-                # slucaj1
+                # slucaj zahtijev poslan nama
                 if get_friend_request_or_false(posiljatelj=account, primatelj=user) != False:
                     request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
                     context['pending_friend_request_id'] = get_friend_request_or_false(posiljatelj=account, primatelj=user).id
-                # slucaj2
+                # slucaj mi poslali zahtijev
                 elif get_friend_request_or_false(posiljatelj=user, primatelj=account) != False:
                     request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
-                # slucaj3
+                # slucaj zahtijev nije poslan
                 else:
                     request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
         elif not user.is_authenticated:
@@ -131,17 +148,22 @@ def profil_view(request, *args, **kwargs):
 
         return render(request, "profili/profil.html", context)
 
+# user search view
 def search_view(request, *args, **kwargs):
     context = {}
 
+    #Provjera metode
     if request.method == 'GET':
         search_query = request.GET.get("q")
+
+        #Provjera dali ima podataka u search polju
         if len(search_query) > 0:
             rezultati = Account.objects.filter(username__icontains=search_query).distinct()
             
             user = request.user
             accounts = []
 
+            # postavljanje accounta iz rezultata u varijablu
             for account in rezultati:
                 accounts.append((account, False)) # dok ne napravim frendove !!!
             
